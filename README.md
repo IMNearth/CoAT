@@ -1,2 +1,2 @@
-# ThinkGUI
-ThinkGUI: Navigation Chain of Thoughts for Smartphone Intelligent Tasks
+# CoAT with AitZ
+Android in the Zoo: Chain-of-Action-Thought for GUI Agents
