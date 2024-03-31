@@ -36,7 +36,7 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## Android-in-the-Zoo
 
-The data in AiTZ has 18,643 screens together with 2400+ instructions, all annotated with CoAT-driven semantic labels. The sample format for each time step is
+The data in AiTZ has 18,643 screens together with 2500+ instructions, all annotated with CoAT-driven semantic labels. The sample format for each time step is
 
 ```json
 {
