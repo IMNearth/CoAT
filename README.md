@@ -22,7 +22,7 @@
 This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes the description of the previous actions, the current screen, and more importantly the action thinking of what actions should be performed and the outcomes led by the chosen action. To enable an adaptive learning of CoAT process, we construct a benchmark **Android-In-The-Zoo**, which contains 18,643 screen-action pairs together with CoAT annotations.
 
 <div align="center">
-    <img src=assets/intro-total.png width=70% />
+    <img src=assets/intro-total.png width=80% />
 </div>
 
 
