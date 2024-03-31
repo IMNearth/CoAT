@@ -28,7 +28,7 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## 📣 Update
 
-- **[2023-03-31]** We release the first version of our AiTZ dataset, including 18,643 samples with CoAT-driven annotations !
+- **[2023-03-31]** We release the first version of our AiTZ dataset!
 
 - **[2023-03-05]** We have our paper arxived, now you can acess it by clicking [here](https://arxiv.org/abs/2403.02713) !
 
@@ -36,7 +36,7 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## Android-in-the-Zoo
 
-The data in AiTZ has 18,643 screens together with 2400+ instructions, all annotated with CoAT-driven semantic labels. The sample format is
+The data in AiTZ has 18,643 screens together with 2400+ instructions, all annotated with CoAT-driven semantic labels. The sample format for each time step is
 
 ```json
 {
@@ -48,7 +48,7 @@ The data in AiTZ has 18,643 screens together with 2400+ instructions, all annota
   "coat_action_desc":   "[next action description]",
   "coat_action_result": "[action result]",
   ...
-},
+}
 ```
 
 You can refer to  `data-example` folder for a more specific example.
@@ -57,7 +57,7 @@ You can refer to  `data-example` folder for a more specific example.
 
 ### Download
 
-Our dataset ([GoogleDrive](https://drive.google.com/file/d/12xOV2m62fBUFLhMcWIsFiC6zwV7a2RhI/view?usp=drive_link) or [BaiduNetdisk](https://pan.baidu.com/s/1dHG-4L0RE1aYINzMSA4dCw?pwd=7g82)) contains both the screens and the annotations, consuming about 2.6G device space. 
+Our dataset ([GoogleDrive](https://drive.google.com/file/d/12xOV2m62fBUFLhMcWIsFiC6zwV7a2RhI/view?usp=drive_link) or [BaiduNetdisk](https://pan.baidu.com/s/1dHG-4L0RE1aYINzMSA4dCw?pwd=7g82)) contains both the screens (.png) and the annotations (.json), consuming about 2.6G device space. 
 
  
 
