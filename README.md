@@ -28,9 +28,9 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## 📣 Update
 
-- **[2023-03-31]** We release the first version of our AiTZ dataset!
+- **[2024-03-31]** We release the first version of our AiTZ dataset!
 
-- **[2023-03-05]** We have our paper arxived, now you can acess it by clicking [here](https://arxiv.org/abs/2403.02713) !
+- **[2024-03-05]** We have our paper arxived, now you can acess it by clicking [here](https://arxiv.org/abs/2403.02713) !
 
 
 
