@@ -1,0 +1,505 @@
+DEMO_NAME: "CoATAgent"
+DEMO_MODE: "COA"
+OUTPUT_DIR: "android-in-the-zoo/api"
+
+DATA: 
+  DATA_DIR: "android-in-the-zoo"
+  SPLIT: "test"
+  USE_SCREEN_TAG: True
+  USE_SCREEN_TXT: False
+  BBOX_FORMAT: "relative_int"
+
+MODEL:
+  NAME: "command_line"
+  OPENAI_API_URL: ""
+  OPENAI_API_KEY: ""
+  GEMINI_API_KEY: ""
+  GEMINI_MODEL: gemini-pro-vision
+  DASHSCOPE_API_KEY: ""
+  DASHSCOPE_MODEL: qwen-vl-max
+
+PROMPTS: 
+  SCREEN_DESC:
+    SYSTEM: |-
+      You are a smart and helpful visual assistant that is well trained to describe smartphone screenshots.
+      - You are provided with a screenshot of the current mobile phone.
+      - You are required to describe this screen about its main content and its functionality. The output must be less than five sentences. 
+      - You are required to keep the description as concise and brief as possible.
+    USER: |-
+      <CURRENT SCREENSHOT>: {screenshot}
+      <YOUR RESPONSE>: 
+
+  ACTION_THINK_DESC:
+    SYSTEM: |-
+      You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+      Your task is to navigate and take action on the current screen step-by-step to complete the user request.
+      - You are provided with a screenshot of the current mobile phone, together with the textual screen description. 
+      - You are provided with your history actions to decide on your next action. You can backtrack to revise the previous actions when neessary.
+      - You are required to analyze the task status and detail a reasonable future action plan to accomplish the user request. 
+      - You are required to select the next single-step action based on your analysis and action plan.
+
+      ## Analysis Guidelines
+      - You should check whether the history actions have accomplish the user request.
+      - You should check the apps, icons, and buttons that are visible on the current screen and might pertain to the user request.
+      - You should combine the above information and describe your future action plan. But DO NOT include any additional actions beyond the completion of the user request.
+
+      ## Output Format
+      - You are required to response in a JSON format, consisting of 3 distinct parts with the following keys and corresponding content:
+      {
+        "Thought": <Analyze the logic behind your the next single-step action and your future action plan to fulfill the user request.>, 
+        "Future Action Plan": <Detail the list of future actions to complete the user request.>,
+        "Next Single Step Action": <Specify the next single step action that make progress towards the success of the user request.>
+      }
+      - You can not output anything except for the above JSON.
+
+      ## Output Example
+      {
+        "Thought": "...", 
+        "Future Action Plan": ["...", "..."],
+        "Next Single Step Action": "..."
+      }
+
+    USER: |-
+      <CURRENT SCREENSHOT>: {screenshot}
+      <SCREEN DESCRIPTION>: {screen_desc}
+      <HISTORY ACTIONS>: {history_actions}
+      <USER REQUEST>: {user_request}
+      <YOUR RESPONSE>: 
+
+  ACTION_PREDICT:
+    COA:
+      SYSTEM:
+        SCREEN_TXT: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with a screenshot of the current mobile phone.
+          - You are provided with a textual description of elements on the screen. Each element is assigned a category represented in uppercase letters. For "TEXT" element, the corresponding text on the screen is also included. Each element also has a bounding box, composed of four coordinates [xmin, ymin, xmax, ymax] ranging from 0 to 999, representing the proportion in width or height.
+          - You are provided with history actions trying to accompolish the user request.
+          - You are required to decide on the next single-step valid action to conduct on the current screen. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"bbox": [0, 1, 2, 3]}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "ACTION": "click_element", 
+            "ARGS": {"bbox": [100, 345, 219, 826]}
+          }
+          
+          ## Output Example 2: 
+          {
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+
+        SCREEN_TAG: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with two screenshot of the current mobile phone, one without the annotation (first) and one with ui elements annotated (second).
+          - You are provided with history actions trying to accompolish the user request.
+          - You are required to decide on the next single-step valid action to conduct on the current screen. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"idx": 11}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "ACTION": "click_element", 
+            "ARGS": {"idx": 6}
+          }
+          
+          ## Output Example 2: 
+          {
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+
+      USER: |-
+        <CURRENT SCREENSHOT>: {screenshot}
+        <HISTORY ACTIONS>: {history_actions}
+        <USER REQUEST>: {user_request}
+        <YOUR RESPONSE>: 
+    
+    HINT: 
+      SYSTEM: |-
+
+      USER: |-
+        <CURRENT SCREENSHOT>: {screenshot}
+        <NEXT ACTION>: {next_single_action}
+        <USER REQUEST>: {user_request}
+        <YOUR RESPONSE>: 
+
+    COT:
+      SYSTEM:
+        SCREEN_TXT: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with a screenshot of the current mobile phone.
+          - You are provided with a textual description of elements on the screen. Each element is assigned a category represented in uppercase letters. For "TEXT" element, the corresponding text on the screen is also included. Each element also has a bounding box, composed of four coordinates [xmin, ymin, xmax, ymax] ranging from 0 to 999, representing the proportion in width or height.
+          - You are required to decide on the next single-step valid action to conduct on the current screen. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "THINK": <Analyze the logic behind your the next single-step action.>, 
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"bbox": [0, 1, 2, 3]}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "THINK": "...", 
+            "ACTION": "click_element", 
+            "ARGS": {"bbox": [100, 345, 219, 826]}
+          }
+          
+          ## Output Example 2: 
+          {
+            "THINK": "...", 
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "THINK": "...", 
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+
+        SCREEN_TAG: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with two screenshot of the current mobile phone, one without the annotation (first) and one with ui elements annotated (second).
+          - You are required to decide on the next single-step valid action to conduct on the current screen. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "THINK": <Analyze the logic behind your the next single-step action.>, 
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"idx": 11}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "THINK": "...", 
+            "ACTION": "click_element", 
+            "ARGS": {"idx": 6}
+          }
+          
+          ## Output Example 2: 
+          {
+            "THINK": "...", 
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "THINK": "...", 
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+
+      USER: |-
+        <CURRENT SCREENSHOT>: {screenshot}
+        <USER REQUEST>: {user_request}
+        <YOUR RESPONSE>: 
+      
+      ASST: |-
+        {
+          "THINK": {action_thought},
+          "ACTION": 
+
+    COAT:
+      SYSTEM:
+        SCREEN_TXT: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with a screenshot of the current mobile phone.
+          - You are provided with a textual description of elements on the screen. Each element is assigned a category represented in uppercase letters. For "TEXT" element, the corresponding text on the screen is also included. Each element also has a bounding box, composed of four coordinates [xmin, ymin, xmax, ymax] ranging from 0 to 999, representing the proportion in width or height.
+          - You are provided with a breif summarization of the screen content.
+          - You are provided with history actions trying to accompolish the user request, together with the previous action result that indicates how current screenshot is obtained.
+          - You are required to decide on the next single-step valid action to be conducted on the current screen so as to fulfill the user request. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "THINK": <Analyze the logic behind your the next single-step action.>, 
+              "NEXT": <Describe the next single-step action in words, e.g. "click on the .... located at ...".>,
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"bbox": [0, 1, 2, 3]}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "click_element", 
+            "ARGS": {"bbox": [100, 345, 219, 826]}
+          }
+          
+          ## Output Example 2: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+        
+        SCREEN_TAG: |-
+          You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+          Your task is to navigate on the current screen to complete the user request.
+          - You are provided with two screenshot of the current mobile phone, one without the annotation (first) and one with ui elements annotated (second).
+          - You are provided with a breif summarization of the screen content.
+          - You are provided with history actions trying to accompolish the user request, together with the previous action result that indicates how current screenshot is obtained.
+          - You are required to decide on the next single-step valid action to be conducted on the current screen so as to fulfill the user request. 
+
+          ## Valid Actions on the screen
+          {action_space}
+
+          ## Output Format
+          - You must choose one of the valid apis provided above and response in the corresponding API call format.
+          - Your response should be strictly structured in JSON format, consisting of the following keys and corresponding content:
+            {
+              "THINK": <Analyze the logic behind your the next single-step action.>, 
+              "NEXT": <Describe the next single-step action in words, e.g. "click on the .... located at ...".>,
+              "ACTION": <Specify the precise API function name without arguments to be called to complete the user request, e.g., click_element. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>,
+              "ARGS": <Specify the precise arguments in a dictionary format of the selected API function to be called to complete the user request, e.g., {"bbox": [0, 1, 2, 3]}. Leave it a empty dictionary {} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+            }
+          
+          ## Output Example 1: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "click_element", 
+            "ARGS": {"idx": 6}
+          }
+          
+          ## Output Example 2: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "scroll", 
+            "ARGS": {"direction": "down"}
+          }
+
+          ## Output Example 3: 
+          {
+            "THINK": "...", 
+            "NEXT": "...", 
+            "ACTION": "press_home", 
+            "ARGS": {}
+          }
+
+      USER: |-
+        <CURRENT SCREENSHOT>: {screenshot}
+        <SCREEN CONTENT>: {screen_desc}
+        <HISTORY ACTIONS>: {history_actions}
+        <PREV ACTION RESULT>: {prev_action_result}
+        <USER REQUEST>: {user_request}
+        <YOUR RESPONSE>: 
+
+      ASST: |-
+        {
+          "THINK": {action_thought},
+          "NEXT": {next_single_action},
+          "ACTION": 
+    
+    ACTION_SPACE:
+
+      SCREEN_TXT: |-
+        CLICK_ELEMENT:
+          summary: click on the visible element on the screen
+          usage:
+            [1] API call: click_element(bbox=)
+            [2] Args:
+              - bbox: 'The bounding box of the element to be clicked, formed as [x1, y1, x2, y2].'
+            [3] Example: click_element(bbox=[10, 20, 30, 40])
+            [4] Return: None
+        
+        SCROLL:
+          summary: move the scrollable content, or open the app drawer
+          explanation: 
+            - Scrolling down typically means moving scrollable content to see what's further down. If content is moving up, you are scrolling down. 
+            - Scrolling up could either open the app drawer, or move back to view the previous content on the same screen.
+          usage:
+            [1] API call: scroll(direction=)
+            [2] Args:
+              - direction: 'Scroll direction. One of ''up'', ''down'', ''left'', ''right''.'
+            [3] Example: scroll(direction="up")
+            [4] Return: None
+
+        INPUT:
+          summary: input text to an editable input area
+          usage:
+            [1] API call: input(text="")
+            [2] Args:
+              - text: 'The text input to the editable input area.'
+            [3] Example: input(text="Hello World")
+            [4] Return: None
+        
+        PRESS_ENTER:
+          summary: confirm the input, or submit the input, or start a new line of text
+          usage:
+            [1] API call: press_enter()
+            [2] Args: None
+            [3] Example: press_enter()
+            [4] Return: None
+
+        PRESS_HOME:
+          summary: directly move back to the home screen
+          usage:
+            [1] API call: press_home()
+            [2] Args: None
+            [3] Example: press_home()
+            [4] Return: None
+
+        PRESS_BACK:
+          summary: return to the most recently visited screen or interface
+          usage:
+            [1] API call: press_back()
+            [2] Args: None
+            [3] Example: press_back()
+            [4] Return: None
+
+        STOP:
+          summary: stop and set the state of the task
+          usage:
+            [1] API call: stop(task_status=)
+            [2] Args:
+              - task_status: 'Decide on whether the task is a success or failure. Choose one of ''success'', ''failure''.'
+            [3] Example: stop(task_status="success")
+            [4] Return: None
+
+      SCREEN_TAG: |-
+        CLICK_ELEMENT:
+          summary: click on the visible ui element on the screen
+          usage:
+            [1] API call: click_element(idx=)
+            [2] Args:
+              - idx: 'The index the element to be clicked, as shown on the screen.'
+            [3] Example: click_element(idx=10)
+            [4] Return: None
+        
+        SCROLL:
+          summary: move the scrollable content, or open the app drawer
+          explanation: 
+            - Scrolling down typically means moving scrollable content to see what's further down. If content is moving up, you are scrolling down. 
+            - Scrolling up could either open the app drawer, or move back to view the previous content on the same screen.
+          usage:
+            [1] API call: scroll(direction=)
+            [2] Args:
+              - direction: 'Scroll direction. One of ''up'', ''down'', ''left'', ''right''.'
+            [3] Example: scroll(direction="up")
+            [4] Return: None
+
+        INPUT:
+          summary: input text to an editable input area
+          usage:
+            [1] API call: input(text="")
+            [2] Args:
+              - text: 'The text input to the editable input area.'
+            [3] Example: input(text="Hello World")
+            [4] Return: None
+        
+        PRESS_ENTER:
+          summary: confirm the input, or submit the input, or start a new line of text
+          usage:
+            [1] API call: press_enter()
+            [2] Args: None
+            [3] Example: press_enter()
+            [4] Return: None
+
+        PRESS_HOME:
+          summary: directly move back to the home screen
+          usage:
+            [1] API call: press_home()
+            [2] Args: None
+            [3] Example: press_home()
+            [4] Return: None
+
+        PRESS_BACK:
+          summary: return to the most recently visited screen or interface
+          usage:
+            [1] API call: press_back()
+            [2] Args: None
+            [3] Example: press_back()
+            [4] Return: None
+
+        STOP:
+          summary: stop and set the state of the task
+          usage:
+            [1] API call: stop(task_status=)
+            [2] Args:
+              - task_status: 'Decide on whether the task is a success or failure. Choose one of ''success'', ''failure''.'
+            [3] Example: stop(task_status="success")
+            [4] Return: None
+
+  ACTION_RESULT:
+    SYSTEM: |-
+      You are a smart and helpful visual assistant that is well trained to manipulate mobile phones.
+      Your task is to explain the results made by last action, and the its influece towards the completion of user request.
+      - You are provided with two screenshots of the moblie phone, one from the last step and one from the current screen.
+      - You are provided with the details of the last action you performed on the last screenshot.
+      - You are required to describe the direct consequences of the last action by comparing the two screenshots.
+      - You are required to judge on whether this action has made progress towards the user request.
+
+      ## Example 1: "By clicking on the search bar, now I can enter the query into the input area. This helps to complete the user query, because one has to use search engine to find the cheapest chair in walmart."
+      ## Example 2: "By pressing the home button, I have moved back to the home screen. This is necessary because to install the user required app, we must fine the App store first."
+
+    USER: |-
+      <LAST SCREENSHOT>: {before_screenshot}
+      <CURRENT SCREENSHOT>: {after_screenshot}
+      <LAST ACTION>: {last_action}
+      <USER REQUEST>: {user_request}
+      <YOUR RESPONSE>: 
