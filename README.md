@@ -9,6 +9,8 @@
     <img src="https://img.shields.io/badge/Licence-Apache_2.0-Green" />
     <img src="https://img.shields.io/github/stars/IMNearth/CoAT?label=Stars" />
     <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FIMNearth%2FCoAT&count_bg=%2333E5E3&title_bg=%236C6666&icon=&icon_color=%23E7E7E7&title=visitors&edge_flat=true"/></a>
+</p>
+<p align="center">
     <a href="https://arxiv.org/abs/2403.02713"><img src="https://img.shields.io/badge/Paper-Arxiv-red" /></a>
     <a href="https://pan.baidu.com/s/1dHG-4L0RE1aYINzMSA4dCw?pwd=7g82">
       <img src="https://img.shields.io/badge/Baidu Disk-CoAT Dataset-violet?logo=baidu" />
