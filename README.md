@@ -15,7 +15,7 @@
     <a href="https://pan.baidu.com/s/1dHG-4L0RE1aYINzMSA4dCw?pwd=7g82">
       <img src="https://img.shields.io/badge/Baidu Disk-CoAT Dataset-violet?logo=baidu" />
   	</a>
-    <a href="https://drive.google.com/file/d/12xOV2m62fBUFLhMcWIsFiC6zwV7a2RhI/view?usp=drive_link">
+    <a href="https://drive.google.com/file/d/12xOV2m62fBUFLhMcWIsFiC6zwV7a2RhI/view?usp=sharing">
       <img src="https://img.shields.io/badge/Google Drive-CoAT Dataset-blue?logo=googledrive" />
   	</a>
 </p> 
