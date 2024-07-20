@@ -106,7 +106,7 @@ Here we provide a demo code for anyone who wants to try the CoAT on GPT-4V, Qwen
 
 Firstly, go to `coat/config.yaml` and add your own api-keys and urls. 
 
-Secondly, run the folloiwng code in commad line to generate somatic components of CoAT framework:
+Secondly, run the folloiwng code in commad line to generate sematic components of CoAT framework:
 
 ```shell
 python run_coat.py --task "flow" --DEMO_MODE "COAT" --MODEL.NAME "openai/gemini/qwenvl" --num-threads 3
