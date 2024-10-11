@@ -31,6 +31,10 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## 📣 Update
 
+- **[2024-10-11]** We schedule that the evaluation code will be released by 13th Oct!
+
+- **[2024-09-20]** Our work has been accepted to EMNLP2024 Findings!
+
 - **[2024-07-16]** We add the demo code for using CoAT on proprietary models (GPT4V, Gemini-Pro and Qwen-VL-Max)!
 
 - **[2024-03-31]** We release the first version of our AiTZ dataset!
