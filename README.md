@@ -31,7 +31,7 @@ This work presents **Chain-of-Action-Thought** (dubbed **CoAT**), which takes th
 
 ## 📣 Update
 
-- **[2024-10-11]** We schedule that the evaluation code will be released by 13th Oct!
+- **[2024-10-15]** Evaluation code has been released!
 
 - **[2024-09-20]** Our work has been accepted to EMNLP2024 Findings!
 
